@@ -7,6 +7,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+// Add session state
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+// Add HttpContextAccessor for session access
+builder.Services.AddHttpContextAccessor();
+
 // Configure CORS for React client
 builder.Services.AddCors(options =>
 {
@@ -43,6 +55,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors();
+
+app.UseSession();
 
 app.UseAuthorization();
 

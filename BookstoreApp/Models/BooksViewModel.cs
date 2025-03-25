@@ -8,5 +8,6 @@ namespace BookstoreApp.Models
         public PaginationInfo PaginationInfo { get; set; }
         public string? SortColumn { get; set; }
         public string? SortDirection { get; set; }
+        public string? SelectedCategory { get; set; }
     }
 }

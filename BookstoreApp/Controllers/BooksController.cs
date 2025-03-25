@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using BookstoreApp.Models;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace BookstoreApp.Controllers
 {
@@ -16,14 +17,20 @@ namespace BookstoreApp.Controllers
         }
 
         [HttpGet]
-        public ActionResult<BooksViewModel> GetBooks(int pageNumber = 1, int pageSize = 5, string sortColumn = "Title", string sortDirection = "asc")
+        public ActionResult<BooksViewModel> GetBooks(int pageNumber = 1, int pageSize = 5, string sortColumn = "Title", string sortDirection = "asc", string? category = null)
         {
-            // Get total count of books
-            var totalItems = _repository.Books.Count();
-
-            // Apply sorting
+            // Apply category filter if provided
             var booksQuery = _repository.Books;
             
+            if (!string.IsNullOrEmpty(category) && category != "all")
+            {
+                booksQuery = booksQuery.Where(b => b.Category == category);
+            }
+            
+            // Get total count of books after filtering
+            var totalItems = booksQuery.Count();
+
+            // Apply sorting
             booksQuery = sortColumn.ToLower() switch
             {
                 "title" => sortDirection.ToLower() == "asc" 
@@ -72,10 +79,23 @@ namespace BookstoreApp.Controllers
                 Books = books,
                 PaginationInfo = paginationInfo,
                 SortColumn = sortColumn,
-                SortDirection = sortDirection
+                SortDirection = sortDirection,
+                SelectedCategory = category
             };
 
             return viewModel;
+        }
+        
+        [HttpGet("categories")]
+        public ActionResult<List<string>> GetCategories()
+        {
+            var categories = _repository.Books
+                .Select(b => b.Category)
+                .Distinct()
+                .OrderBy(c => c)
+                .ToList();
+                
+            return categories;
         }
     }
 }

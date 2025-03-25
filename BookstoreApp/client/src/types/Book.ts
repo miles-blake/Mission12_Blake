@@ -22,4 +22,5 @@ export interface BooksResponse {
     paginationInfo: PaginationInfo;
     sortColumn: string;
     sortDirection: string;
+    selectedCategory?: string;
 }

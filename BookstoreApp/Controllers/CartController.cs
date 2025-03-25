@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using BookstoreApp.Models;
 using System.Text.Json;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace BookstoreApp.Controllers
 {
@@ -30,13 +31,39 @@ namespace BookstoreApp.Controllers
                 return new Cart();
             }
             
-            return JsonSerializer.Deserialize<Cart>(cartJson);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            
+            var cart = JsonSerializer.Deserialize<Cart>(cartJson, options);
+            
+            // Ensure the Items list is initialized
+            if (cart.Items == null)
+            {
+                cart.Items = new List<CartItem>();
+            }
+            
+            // Reload Book objects from the database to ensure they are properly initialized
+            foreach (var item in cart.Items)
+            {
+                if (item.Book == null)
+                {
+                    item.Book = _repository.Books.FirstOrDefault(b => b.BookID == item.BookId);
+                }
+            }
+            
+            return cart;
         }
 
         private void SaveCart(Cart cart)
         {
             var session = _httpContextAccessor.HttpContext.Session;
-            string cartJson = JsonSerializer.Serialize(cart);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            string cartJson = JsonSerializer.Serialize(cart, options);
             session.SetString(CartSessionKey, cartJson);
         }
 

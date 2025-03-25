@@ -5,6 +5,7 @@ export interface CartItem {
     book: Book;
     bookId: number;
     quantity: number;
+    unitPrice: number;
     price: number;
 }
 

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace BookstoreApp.Models
 {
@@ -13,6 +14,10 @@ namespace BookstoreApp.Models
         
         public int Quantity { get; set; }
         
-        public decimal Price => Book.Price * Quantity;
+        // Store the price directly to avoid serialization issues
+        public decimal UnitPrice { get; set; }
+        
+        [JsonIgnore]
+        public decimal Price => Book?.Price * Quantity ?? UnitPrice * Quantity;
     }
 }

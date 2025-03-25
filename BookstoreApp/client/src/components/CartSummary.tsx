@@ -8,7 +8,10 @@ const CartSummary: React.FC = () => {
     const navigate = useNavigate();
 
     const totalItems = cart?.items.reduce((total, item) => total + item.quantity, 0) || 0;
-    const totalPrice = cart?.items.reduce((total, item) => total + item.price, 0) || 0;
+    const totalPrice = cart?.items.reduce((total, item) => {
+        const itemPrice = item.price || (item.unitPrice * item.quantity);
+        return total + (isNaN(itemPrice) ? 0 : itemPrice);
+    }, 0) || 0;
 
     const handleViewCart = () => {
         navigate('/cart');

@@ -23,7 +23,8 @@ namespace BookstoreApp.Models
                 {
                     Book = book,
                     BookId = book.BookID,
-                    Quantity = quantity
+                    Quantity = quantity,
+                    UnitPrice = book.Price
                 });
             }
         }

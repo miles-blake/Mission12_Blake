@@ -38,7 +38,10 @@ const Cart: React.FC = () => {
         navigate(lastPageVisited || '/');
     };
 
-    const totalPrice = cart.items.reduce((total, item) => total + item.price, 0);
+    const totalPrice = cart.items.reduce((total, item) => {
+        const itemPrice = item.price || (item.unitPrice * item.quantity);
+        return total + (isNaN(itemPrice) ? 0 : itemPrice);
+    }, 0);
 
     return (
         <Container className="mt-4">
@@ -65,7 +68,7 @@ const Cart: React.FC = () => {
                                     by {item.book.author}
                                 </div>
                             </td>
-                            <td>${item.book.price.toFixed(2)}</td>
+                            <td>${(item.book?.price || item.unitPrice).toFixed(2)}</td>
                             <td style={{ width: '150px' }}>
                                 <Form.Control
                                     type="number"
@@ -74,7 +77,7 @@ const Cart: React.FC = () => {
                                     onChange={(e) => handleQuantityChange(item.bookId, parseInt(e.target.value))}
                                 />
                             </td>
-                            <td>${item.price.toFixed(2)}</td>
+                            <td>${(item.price || (item.unitPrice * item.quantity)).toFixed(2)}</td>
                             <td>
                                 <Button 
                                     variant="danger" 

@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { BooksResponse } from '../types/Book';
 
+// Configure axios to include credentials with requests
+axios.defaults.withCredentials = true;
+
 const API_URL = 'http://localhost:5005/api/books';
 const CATEGORIES_URL = `${API_URL}/categories`;
 

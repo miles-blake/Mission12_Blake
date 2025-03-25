@@ -2,6 +2,9 @@ import axios from 'axios';
 import { Book } from '../types/Book';
 import { Cart } from '../types/Cart';
 
+// Configure axios to include credentials with requests
+axios.defaults.withCredentials = true;
+
 const API_URL = 'http://localhost:5005/api/cart';
 
 export const getCart = async (): Promise<Cart> => {
